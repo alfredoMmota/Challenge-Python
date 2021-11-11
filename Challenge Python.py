@@ -61,16 +61,15 @@ def notificacion(bolsa,variacion=0):#Funcion que despliega la notificación en e
 if __name__ == "__main__":
     page_url = 'https://smartrader.io/' #Se define la url de la pagina
     toaster = ToastNotifier() #se define el notificador
-    # hoy = date.today() # se obtiene la fecha actual
-    hoy = date.today()-timedelta(days = 1)# se obtiene la fecha de cierre del dia anterior
-    ayer = date.today()-timedelta(days = 2)
+    hoy = date.today() # se obtiene la fecha actual
+    ayer = date.today()-timedelta(days = 1)# se obtiene la fecha de cierre del dia anterior
     #Se realizan las primeras lecturas de los datos de las bolsas de valores Nikkey 225, Dax Index y Nasdaq
     nikkey25 = web.DataReader("^N225", "yahoo", ayer, hoy)
     dax = web.DataReader("^DAX-EU", "yahoo", ayer, hoy)
     nasdaq =  web.DataReader("^IXIC", "yahoo", ayer, hoy)
     #Se almacena el valor de cierre
     PrecioInicialNikkey = nikkey25.loc[ayer,"Adj Close"]
-    PrecioInicialDax = dax.loc[hoy,"Adj Close"]
+    PrecioInicialDax = dax.loc[ayer,"Adj Close"]
     PrecioInicialNasdaq = nasdaq.loc[ayer,"Adj Close"]
     
     while True:#se crea un ciclo para mantener ejecutando la comparacion de valores
@@ -101,22 +100,22 @@ if __name__ == "__main__":
             notificacion("Nikkey 225", 2)
         else:
             notificacion("Nikkey 225")
-        time.sleep(5)
+        time.sleep(10)
         if Diferencia_Dax > variacion_Dax:
             notificacion("Dax", 1)
         elif Diferencia_Dax < (variacion_Dax * -1):
             notificacion("Dax", 2)
         else:
             notificacion("Dax")
-        time.sleep(5)
+        time.sleep(10)
         if Diferencia_Nasdaq > variacion_Nasdaq:
             notificacion("Nasdaq", 1)
         elif Diferencia_Nasdaq < (variacion_Nasdaq * -1):
             notificacion("Nasdaq", 2)
         else:
             notificacion("Nasdaq")
-        #Se determina el lapso de tiempo para cada una de las lecturas y comparación
-        time.sleep(5)
+        #Se determina el lapso de tiempo para cada una de las lecturas y comparación (7200 segundos = 2 hrs)
+        time.sleep(7200)
         #Se actualizan los precios con la ultima lectura realizada
         PrecioInicialNikkey = PrecioActualNikkey
         PrecioInicialDax = PrecioActualDax
